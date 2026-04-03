@@ -32,7 +32,7 @@ const Landing = () => {
                         onClick={() => navigate("/login")}
                         className="px-6 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-blue-500/50"
                     >
-                        Login
+                        Get Started
                     </button>
 
                     <button
