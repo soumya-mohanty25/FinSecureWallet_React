@@ -7,9 +7,37 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = () => {
-    console.log("Login:", email, password);
-  };
+const handleLogin = async () => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_API_BASE_URL}/login`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      }
+    );
+
+    const data = await response.json();
+
+    console.log("LOGIN RESPONSE:", data);
+
+    if (response.ok) {
+      alert("Login Successful 🚀");
+      navigate("/"); // later change to dashboard
+    } else {
+      alert(data.message || "Login Failed ❌");
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    alert("Server not reachable");
+  }
+};
 
   return (
     <div className="h-screen w-full relative overflow-hidden flex items-center justify-center bg-gradient-to-br from-black via-gray-900 to-black text-white">
