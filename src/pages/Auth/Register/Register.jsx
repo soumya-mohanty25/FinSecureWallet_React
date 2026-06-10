@@ -25,16 +25,73 @@ const Register = () => {
         setForm({ ...form, profilePicture: e.target.files[0] });
     };
 
-    const handleRegister = () => {
-        console.log("REGISTER DATA:", form);
+    const handleRegister = async () => {
 
         if (form.password !== form.confirmPassword) {
             alert("Passwords do not match!");
             return;
         }
 
-        // later API call
-        // navigate("/otp");
+        try {
+
+            const response = await fetch(
+                `${import.meta.env.VITE_API_BASE_URL}/citizen/register`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        firstName: form.firstName,
+                        lastName: form.lastName,
+                        phoneNumber: form.phoneNumber,
+                        emailId: form.emailId,
+                        gender: form.gender,
+                        address: form.address,
+                        password: form.password,
+                        confirmPassword: form.confirmPassword,
+
+                        // optional fields
+                        alternateNo: form.alternateNo,
+                        designation: form.designation,
+                        organization: form.organization,
+                        state: form.state,
+                        district: form.district,
+                        city: form.city,
+                        pin: form.pin,
+                        idProofType: form.idProofType,
+                        idProofNo: form.idProofNo
+                    }),
+                }
+            );
+
+            const data = await response.json();
+
+            console.log("REGISTER RESPONSE:", data);
+
+            if (data.outcome) {
+
+                alert(data.message);
+
+                navigate("/verify-otp", {
+                    state: {
+                        emailId: form.emailId
+                    }
+                });
+
+            } else {
+
+                alert(data.message);
+
+            }
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert("Server not reachable");
+
+        }
     };
 
     return (
