@@ -8,10 +8,20 @@ const Register = () => {
         firstName: "",
         lastName: "",
         phoneNumber: "",
+        alternateNo: "",
         emailId: "",
         gender: "",
         address: "",
+        state: "",
+        district: "",
+        city: "",
+        pin: "",
+        designation: "",
+        organization: "",
+        idProofType: "",
+        idProofNo: "",
         profilePicture: null,
+        idProofDoc: null,
         password: "",
         confirmPassword: "",
     });
@@ -22,7 +32,8 @@ const Register = () => {
     };
 
     const handleFileChange = (e) => {
-        setForm({ ...form, profilePicture: e.target.files[0] });
+        const { name, files } = e.target;
+        setForm({ ...form, [name]: files[0] });
     };
 
     const handleRegister = async () => {
@@ -33,35 +44,33 @@ const Register = () => {
         }
 
         try {
+            const formData = new FormData();
+            
+            const textFields = [
+                "firstName", "lastName", "phoneNumber", "alternateNo", "emailId", 
+                "gender", "address", "state", "district", "city", "pin", 
+                "designation", "organization", "idProofType", "idProofNo", 
+                "password", "confirmPassword"
+            ];
+            
+            textFields.forEach(field => {
+                if (form[field]) {
+                    formData.append(field, form[field]);
+                }
+            });
+
+            if (form.profilePicture) {
+                formData.append("profilePicture", form.profilePicture);
+            }
+            if (form.idProofDoc) {
+                formData.append("idProofDoc", form.idProofDoc);
+            }
 
             const response = await fetch(
                 `${import.meta.env.VITE_API_BASE_URL}/citizen/register`,
                 {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        firstName: form.firstName,
-                        lastName: form.lastName,
-                        phoneNumber: form.phoneNumber,
-                        emailId: form.emailId,
-                        gender: form.gender,
-                        address: form.address,
-                        password: form.password,
-                        confirmPassword: form.confirmPassword,
-
-                        // optional fields
-                        alternateNo: form.alternateNo,
-                        designation: form.designation,
-                        organization: form.organization,
-                        state: form.state,
-                        district: form.district,
-                        city: form.city,
-                        pin: form.pin,
-                        idProofType: form.idProofType,
-                        idProofNo: form.idProofNo
-                    }),
+                    body: formData,
                 }
             );
 
@@ -158,6 +167,15 @@ const Register = () => {
                             className="mb-3 w-full px-4 py-2 rounded-xl bg-white/5 border border-white/10 outline-none"
                         />
 
+                        {/* Alternate Number */}
+                        <input
+                            name="alternateNo"
+                            placeholder="Alternate Phone Number"
+                            value={form.alternateNo}
+                            onChange={handleChange}
+                            className="mb-3 w-full px-4 py-2 rounded-xl bg-white/5 border border-white/10 outline-none"
+                        />
+
                         {/* Email */}
                         <input
                             name="emailId"
@@ -189,11 +207,103 @@ const Register = () => {
                             className="mb-3 w-full px-4 py-2 rounded-xl bg-white/5 border border-white/10 outline-none"
                         />
 
-                        {/* Profile Picture */}
+                        {/* State */}
+                        <input
+                            type="text"
+                            name="state"
+                            placeholder="State"
+                            value={form.state}
+                            onChange={handleChange}
+                            className="mb-3 w-full px-4 py-2 rounded-xl bg-white/5 border border-white/10 outline-none"
+                        />
+
+                        {/* District */}
+                        <input
+                            type="text"
+                            name="district"
+                            placeholder="District"
+                            value={form.district}
+                            onChange={handleChange}
+                            className="mb-3 w-full px-4 py-2 rounded-xl bg-white/5 border border-white/10 outline-none"
+                        />
+
+                        {/* City */}
+                        <input
+                            type="text"
+                            name="city"
+                            placeholder="City"
+                            value={form.city}
+                            onChange={handleChange}
+                            className="mb-3 w-full px-4 py-2 rounded-xl bg-white/5 border border-white/10 outline-none"
+                        />
+
+                        {/* PIN */}
+                        <input
+                            name="pin"
+                            placeholder="PIN Code"
+                            value={form.pin}
+                            onChange={handleChange}
+                            className="mb-3 w-full px-4 py-2 rounded-xl bg-white/5 border border-white/10 outline-none"
+                        />
+
+                        {/* Designation */}
+                        <input
+                            name="designation"
+                            placeholder="Designation"
+                            value={form.designation}
+                            onChange={handleChange}
+                            className="mb-3 w-full px-4 py-2 rounded-xl bg-white/5 border border-white/10 outline-none"
+                        />
+
+                        {/* Organization */}
+                        <input
+                            name="organization"
+                            placeholder="Organization"
+                            value={form.organization}
+                            onChange={handleChange}
+                            className="mb-3 w-full px-4 py-2 rounded-xl bg-white/5 border border-white/10 outline-none"
+                        />
+
+                        {/* ID Proof Type */}
+                        <select
+                            name="idProofType"
+                            value={form.idProofType}
+                            onChange={handleChange}
+                            className="mb-3 w-full px-4 py-2 rounded-xl bg-black/40 border border-white/10 outline-none"
+                        >
+                            <option value="">Select ID Proof Type</option>
+                            <option value="Aadhaar">Aadhaar</option>
+                            <option value="PAN">PAN</option>
+                            <option value="Passport">Passport</option>
+                            <option value="Driving License">Driving License</option>
+                            <option value="Voter ID">Voter ID</option>
+                        </select>
+
+                        {/* ID Proof Number */}
+                        <input
+                            name="idProofNo"
+                            placeholder="ID Proof Number"
+                            value={form.idProofNo}
+                            onChange={handleChange}
+                            className="mb-3 w-full px-4 py-2 rounded-xl bg-white/5 border border-white/10 outline-none"
+                        />
+
+                        {/* ID Proof Document */}
+                        <label className="block text-gray-400 text-sm mb-1 ml-1">ID Proof Document</label>
                         <input
                             type="file"
+                            name="idProofDoc"
                             onChange={handleFileChange}
-                            className="mb-3 w-full text-sm"
+                            className="mb-3 w-full text-sm text-gray-300"
+                        />
+
+                        {/* Profile Picture */}
+                        <label className="block text-gray-400 text-sm mb-1 ml-1">Profile Picture</label>
+                        <input
+                            type="file"
+                            name="profilePicture"
+                            onChange={handleFileChange}
+                            className="mb-3 w-full text-sm text-gray-300"
                         />
 
                         {/* Password */}
