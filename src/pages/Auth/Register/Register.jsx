@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import LoaderOverlay from "../../../components/Loader/LoaderOverlay";
 
 const Register = () => {
     const navigate = useNavigate();
@@ -25,6 +26,8 @@ const Register = () => {
         password: "",
         confirmPassword: "",
     });
+    
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -42,6 +45,8 @@ const Register = () => {
             alert("Passwords do not match!");
             return;
         }
+
+        setIsLoading(true);
 
         try {
             const formData = new FormData();
@@ -100,10 +105,14 @@ const Register = () => {
 
             alert("Server not reachable");
 
+        } finally {
+            setIsLoading(false);
         }
     };
 
     return (
+        <>
+        <LoaderOverlay isLoading={isLoading} />
         <div className="h-screen w-full relative overflow-hidden flex items-center justify-center bg-gradient-to-br from-black via-gray-900 to-black text-white">
 
             {/* 🌌 BACKGROUND GLOWS */}
@@ -339,6 +348,7 @@ const Register = () => {
 
             </div>
         </div>
+        </>
     );
 };
 

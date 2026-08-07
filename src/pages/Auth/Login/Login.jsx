@@ -1,13 +1,17 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import LoaderOverlay from "../../../components/Loader/LoaderOverlay";
+
 const Login = () => {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
 const handleLogin = async () => {
+  setIsLoading(true);
   try {
     const response = await fetch(
       `${import.meta.env.VITE_API_BASE_URL}/login`,
@@ -36,11 +40,15 @@ const handleLogin = async () => {
   } catch (error) {
     console.error("Error:", error);
     alert("Server not reachable");
+  } finally {
+    setIsLoading(false);
   }
 };
 
   return (
-    <div className="h-screen w-full relative overflow-hidden flex items-center justify-center bg-gradient-to-br from-black via-gray-900 to-black text-white">
+    <>
+      <LoaderOverlay isLoading={isLoading} />
+      <div className="h-screen w-full relative overflow-hidden flex items-center justify-center bg-gradient-to-br from-black via-gray-900 to-black text-white">
 
       {/* 🌌 MOVING BACKGROUND GLOWS */}
       <div className="absolute w-[500px] h-[500px] bg-blue-600/20 blur-[140px] top-[-120px] left-[-120px] animate-float-slow"></div>
@@ -118,6 +126,7 @@ const handleLogin = async () => {
 
       </div>
     </div>
+    </>
   );
 };
 
