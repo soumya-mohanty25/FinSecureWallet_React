@@ -38,16 +38,15 @@ const VerifyOtp = () => {
 
             const data = await response.json();
 
-            if (data.outcome) {
+            if (response.ok || data.outcome) {
 
-                alert("OTP Verified Successfully");
-
-                // Redirect to login page
-                navigate("/login");
+                alert(data.message || "OTP Verified Successfully");
+                navigate("/dashboard");
 
             } else {
 
-                alert(data.message);
+                alert(data.message || "Verification Failed");
+                navigate("/login");
 
             }
 

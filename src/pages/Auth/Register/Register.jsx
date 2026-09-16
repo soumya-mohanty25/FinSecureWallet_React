@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import LoaderOverlay from "../../../components/Loader/LoaderOverlay";
+import { validateAadhaar } from "../../../utils/commonUtil";
 
 const Register = () => {
     const navigate = useNavigate();
@@ -41,9 +42,52 @@ const Register = () => {
 
     const handleRegister = async () => {
 
+        const requiredFields = [
+            { key: "firstName", name: "First Name" },
+            { key: "lastName", name: "Last Name" },
+            { key: "phoneNumber", name: "Phone Number" },
+            { key: "alternateNo", name: "Alternate Phone Number" },
+            { key: "emailId", name: "Email ID" },
+            { key: "gender", name: "Gender" },
+            { key: "address", name: "Address" },
+            { key: "state", name: "State" },
+            { key: "district", name: "District" },
+            { key: "city", name: "City" },
+            { key: "pin", name: "PIN Code" },
+            { key: "designation", name: "Designation" },
+            { key: "organization", name: "Organization" },
+            { key: "idProofType", name: "ID Proof Type" },
+            { key: "idProofNo", name: "ID Proof Number" },
+            { key: "password", name: "Password" },
+            { key: "confirmPassword", name: "Confirm Password" }
+        ];
+
+        for (let field of requiredFields) {
+            if (!form[field.key] || form[field.key].trim() === "") {
+                if (typeof window !== 'undefined' && window.bootbox) {
+                    window.bootbox.alert(`Please fill up the ${field.name} field.`);
+                } else {
+                    alert(`Please fill up the ${field.name} field.`);
+                }
+                return;
+            }
+        }
+
         if (form.password !== form.confirmPassword) {
-            alert("Passwords do not match!");
+            if (typeof window !== 'undefined' && window.bootbox) window.bootbox.alert("Passwords do not match!");
+            else alert("Passwords do not match!");
             return;
+        }
+
+        if (form.idProofType === "Aadhaar") {
+            const aadhaarValidation = validateAadhaar(form.idProofNo);
+            if (!aadhaarValidation.isValid) {
+                if (typeof window !== 'undefined' && window.bootbox) window.bootbox.alert(aadhaarValidation.message);
+                else alert(aadhaarValidation.message);
+                // Optionally clear the idProofNo field here
+                setForm({ ...form, idProofNo: '' });
+                return;
+            }
         }
 
         setIsLoading(true);

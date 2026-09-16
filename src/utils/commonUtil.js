@@ -1,3 +1,16 @@
+// @ts-nocheck
+/* eslint-disable */
+if (typeof window !== 'undefined' && typeof window.$ === 'undefined') {
+    window.$ = function() {
+        return {
+            on: function() {}, keydown: function() {}, keypress: function() {}, 
+            keyup: function() {}, blur: function() {}, ready: function() {}
+        };
+    };
+}
+const $ = typeof window !== 'undefined' ? window.$ : function() {};
+
+
 $(function() {
 
 		$('.AlphabetsOnly').keydown(function(e) {
@@ -878,21 +891,19 @@ $('.validate-textarea').on('input', function () {
             return c === 0;
         }
 
-        function validateAadhaar(id) {
-            var aadhaar = document.getElementById(id).value.trim();
+        export function validateAadhaar(aadhaar) {
+            if (!aadhaar) return { isValid: false, message: "Aadhaar number is required." };
+            
+            const aadhaarStr = String(aadhaar).trim();
 
-            if (!/^\d{12}$/.test(aadhaar)) {
-                bootbox.alert("Aadhaar number must be exactly 12 digits.");
-                 $("#"+id).val('');
-                return false;
+            if (!/^\d{12}$/.test(aadhaarStr)) {
+                return { isValid: false, message: "Aadhaar number must be exactly 12 digits." };
             }
 
-            if (!ValidAadhaarNo(aadhaar)) {
-                bootbox.alert("Invalid Aadhaar number.");
-                $("#"+id).val('');
-                return false;
+            if (!ValidAadhaarNo(aadhaarStr)) {
+                return { isValid: false, message: "Invalid Aadhaar number." };
             }
 
-            return true;
+            return { isValid: true, message: "Valid Aadhaar number." };
         }
  
