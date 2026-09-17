@@ -2,9 +2,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import LoaderOverlay from "../../../components/Loader/LoaderOverlay";
 import { validateAadhaar } from "../../../utils/commonUtil";
+import { useAlert } from "../../../context/AlertContext";
 
 const Register = () => {
     const navigate = useNavigate();
+    const { showAlert } = useAlert();
 
     const [form, setForm] = useState({
         firstName: "",
@@ -64,26 +66,20 @@ const Register = () => {
 
         for (let field of requiredFields) {
             if (!form[field.key] || form[field.key].trim() === "") {
-                if (typeof window !== 'undefined' && window.bootbox) {
-                    window.bootbox.alert(`Please fill up the ${field.name} field.`);
-                } else {
-                    alert(`Please fill up the ${field.name} field.`);
-                }
+                showAlert(`Please fill up the ${field.name} field.`, "error");
                 return;
             }
         }
 
         if (form.password !== form.confirmPassword) {
-            if (typeof window !== 'undefined' && window.bootbox) window.bootbox.alert("Passwords do not match!");
-            else alert("Passwords do not match!");
+            showAlert("Passwords do not match!", "error");
             return;
         }
 
         if (form.idProofType === "Aadhaar") {
             const aadhaarValidation = validateAadhaar(form.idProofNo);
             if (!aadhaarValidation.isValid) {
-                if (typeof window !== 'undefined' && window.bootbox) window.bootbox.alert(aadhaarValidation.message);
-                else alert(aadhaarValidation.message);
+                showAlert(aadhaarValidation.message, "error");
                 // Optionally clear the idProofNo field here
                 setForm({ ...form, idProofNo: '' });
                 return;
@@ -129,17 +125,17 @@ const Register = () => {
 
             if (data.outcome) {
 
-                alert(data.message);
-
-                navigate("/verify-otp", {
-                    state: {
-                        emailId: form.emailId
-                    }
+                showAlert(data.message, "success", () => {
+                    navigate("/verify-otp", {
+                        state: {
+                            emailId: form.emailId
+                        }
+                    });
                 });
 
             } else {
 
-                alert(data.message);
+                showAlert(data.message, "error");
 
             }
 
@@ -147,7 +143,7 @@ const Register = () => {
 
             console.error(error);
 
-            alert("Server not reachable");
+            showAlert("Server not reachable", "error");
 
         } finally {
             setIsLoading(false);
@@ -392,6 +388,7 @@ const Register = () => {
 
             </div>
         </div>
+
         </>
     );
 };
